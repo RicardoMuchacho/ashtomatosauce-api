@@ -15,10 +15,6 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_SECRET_KEY,
 });
 */
-async function get_manga() {
-  cloudinary.v2.search.execute().then((result) => console.log(result));
-}
-
 async function create_chapter(manga_id, chapter_number, pages) {
   var i = 1;
   var pages_url = [];
@@ -42,11 +38,13 @@ async function create_chapter(manga_id, chapter_number, pages) {
         console.log(i);
       }
     );
+    fs.unlink(element, (error) => console.log(error));
     i++;
     pages_url.push(response.secure_url);
   }
   console.log(pages_url);
-  db.create_chapter(manga_id, chapter_number, pages_url);
+  var r = await db.create_chapter(manga_id, chapter_number, pages_url);
+  return r;
 }
 
 var pages = [
@@ -88,6 +86,6 @@ cloudinary.v2.search
 
 
 */
-export = { get_manga, create_chapter };
+export = { create_chapter };
 
 //ts-node chapter_controller.ts

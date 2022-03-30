@@ -1,11 +1,15 @@
 var express = require("express");
 var router = express.Router();
-const multer = require('multer')
+const multer = require("multer");
 const dotenv = require("dotenv").config();
 const db = require("../helpers/db.ts");
 const User = require("../models/user");
 const Comment = require("../models/comment");
 const Manga = require("../models/comment");
+const path = require("path");
+const fs = require("fs");
+
+const upload = multer({ dest: "uploads/" });
 
 //controllers
 const manga_c = require("../controllers/manga_controller");
@@ -14,23 +18,51 @@ const chapter_c = require("../controllers/chapter_controller");
 var router = express.Router();
 
 router.get("/", async (req, res) => {
-  res.send("user route");
+  res.send("manga route");
 });
 
-router.post("/", async (req, res) => {
+router.post("/", upload.single("image"), async function (req, res, next) {
+  const { title, username, description } = req.body;
+  const file = req.file;
+  console.log(file);
+
+  var response = await manga_c.create_manga(
+    title,
+    file.path,
+    username,
+    description
+  );
+
+  await fs.unlink(file.path, (error) => console.log(error));
+  res.send(JSON.stringify(response));
+});
+
+router.post(
+  "/chapter",
+  upload.array("images", 80),
+  async function (req, res, next) {
+    const files = req.files;
+    const { manga_id, number } = req.body;
+
+    const file_paths = files.map((i) => i.path);
+    console.log(file_paths);
+    var r = await chapter_c.create_chapter(manga_id, number, file_paths);
+    res.send(JSON.stringify(r));
+  }
+);
+
+router.post("/test", async (req, res) => {
   try {
     var prev_username = req.params.user;
     var new_username = req.body.username;
     var new_password = req.body.password;
     var new_name = req.body.name;
 
-    var encrypted_password = await bcrypt.hash(new_password, 10);
-
     const query = { username: prev_username };
 
     var r = await User.findOneAndUpdate(
       query,
-      { name: new_name, username: new_username, password: encrypted_password },
+      { name: new_name },
       {
         new: true,
       }
