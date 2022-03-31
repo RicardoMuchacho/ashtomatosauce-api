@@ -3,8 +3,9 @@ var router = express.Router();
 const bcrypt = require("bcryptjs");
 const dotenv = require("dotenv");
 const db = require("../helpers/db.ts");
-var User = require("../models/user");
-var Comment = require("../models/comment");
+const User = require("../models/user");
+const Comment = require("../models/comment");
+const Manga = require("../models/manga");
 
 var router = express.Router();
 
@@ -59,15 +60,15 @@ router.get("/:user/comments", async (req, res) => {
   res.send(JSON.stringify(r));
 });
 
-router.post("/:user/movies", async (req, res) => {
+router.delete("/:user/mangas", async (req, res) => {
   var username = req.params.user;
-  var movie_id = req.body.id;
-  var movie_title = req.body.title;
+  var manga_id = req.body.id;
+  var manga_title = req.body.title;
   const query = { username: username };
 
   var r = await User.findOneAndUpdate(
     query,
-    { $pull: { movies: [{ id: movie_id }] } },
+    { $pull: { mangas: [{ id: manga_id }] } },
     {
       new: true,
     }
@@ -75,38 +76,48 @@ router.post("/:user/movies", async (req, res) => {
   res.send(JSON.stringify(r));
 });
 
-router.get("/:user/movies", async (req, res) => {
-  var username = req.params.user;
+router.post("/:user/mangas", async (req, res) => {
+  const username = req.params.user;
+  const manga_id = req.body.id;
 
-  var r = await User.findOne({ username: username });
-  console.log(r);
+  const manga = await Manga.findById(manga_id);
+  const manga_title = manga.title;
 
-  var user_movies = r.movies;
-  if (!user_movies || user_movies == "") {
-    return res.send(JSON.stringify("No movies added yet"));
+  var is_added = false;
+  const query = { username: username };
+
+  var r = await User.findOne(query);
+  var user_mangas = r.mangas;
+  user_mangas.forEach((i) => {
+    if (i.id == manga_id) {
+      return (is_added = true);
+    }
+  });
+  if (is_added != false) {
+    return res.send(JSON.stringify("Manga already added"));
+  } else {
+    r = await User.findOneAndUpdate(
+      query,
+      { $push: { movies: { id: manga_id, title: manga_title } } },
+      {
+        new: true,
+      }
+    );
   }
-  res.send(JSON.stringify(user_movies));
+  res.send(JSON.stringify(r));
 });
 
-router.post("/:user/ratings", async (req, res) => {
-  var username = req.params.user;
-  var new_rating = req.body.rating;
-  var movie_id = req.body.id;
+router.get("/:user/mangas", async (req, res) => {
+  const username = req.params.user;
 
-  const query = { username: username, movie_id: movie_id };
-  /*
-  var r = await Rating.findOneAndUpdate(
-    query,
-    { rating: new_rating },
-    {
-      new: true,
-    }
-  );
-  if (!r || r == "") {
-    r = await db.create_rating(movie_id, username, new_rating);
+  const r = await User.findOne({ username: username });
+  console.log(r);
+
+  var user_mangas = r.mangas;
+  if (!user_mangas || user_mangas == "") {
+    return res.send(JSON.stringify("No mangas added yet"));
   }
-
-  res.send(JSON.stringify(r));*/
+  res.send(JSON.stringify(user_mangas));
 });
 
 export = router;

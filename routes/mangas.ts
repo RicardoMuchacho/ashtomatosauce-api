@@ -5,7 +5,7 @@ const dotenv = require("dotenv").config();
 const db = require("../helpers/db.ts");
 const User = require("../models/user");
 const Comment = require("../models/comment");
-const Manga = require("../models/comment");
+const Manga = require("../models/manga");
 const path = require("path");
 const fs = require("fs");
 
@@ -18,7 +18,19 @@ const chapter_c = require("../controllers/chapter_controller");
 var router = express.Router();
 
 router.get("/", async (req, res) => {
-  res.send("manga route");
+  const r = await Manga.find();
+  console.log(r);
+  res.send(JSON.stringify(r));
+});
+
+router.get("/:title", async (req, res) => {
+  const manga_title = req.params.title;
+
+  var r = await Manga.find({ title: { $regex: manga_title, $options: "i" } });
+  if (!r || r == null || r == "") {
+    return res.send(JSON.stringify("No Mangas found"));
+  }
+  res.send(JSON.stringify(r));
 });
 
 router.post("/", upload.single("image"), async function (req, res, next) {
@@ -112,7 +124,7 @@ router.post("/:user/movies", async (req, res) => {
   res.send(JSON.stringify(r));
 });
 
-router.get("/:user/movies", async (req, res) => {
+router.get("/:user/mangas", async (req, res) => {
   var username = req.params.user;
 
   var r = await User.findOne({ username: username });
@@ -123,27 +135,6 @@ router.get("/:user/movies", async (req, res) => {
     return res.send(JSON.stringify("No movies added yet"));
   }
   res.send(JSON.stringify(user_movies));
-});
-
-router.post("/:user/ratings", async (req, res) => {
-  var username = req.params.user;
-  var new_rating = req.body.rating;
-  var movie_id = req.body.id;
-
-  const query = { username: username, movie_id: movie_id };
-  /*
-  var r = await Rating.findOneAndUpdate(
-    query,
-    { rating: new_rating },
-    {
-      new: true,
-    }
-  );
-  if (!r || r == "") {
-    r = await db.create_rating(movie_id, username, new_rating);
-  }
-
-  res.send(JSON.stringify(r));*/
 });
 
 export = router;
