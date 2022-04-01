@@ -67,6 +67,27 @@ async function create_manga(title, cover, username, description) {
   return res;
 }
 
+async function update_manga(manga_id, cover, title, description) {
+  var description = description || "";
+
+  var response = await cloudinary.uploader.upload(
+    cover,
+    { folder: `Manga/${title}/`, public_id: "cover" },
+    function (error, result) {
+      console.log(result, error);
+    }
+  );
+  //console.log(response.secure_url);
+  var res = await db.update_manga(
+    manga_id,
+    response.secure_url,
+    title,
+    description
+  );
+  console.log(JSON.stringify(res));
+  return res;
+}
+
 //create_manga("test", "../uploads/eth2.jpeg", "testuser", "");
 //get_manga();
 //cloudinary.v2.api.create_folder("product/test", function (error, result) {
@@ -96,6 +117,6 @@ cloudinary.v2.search
   .execute()
   .then((result) => console.log(result));
 */
-export = { delete_manga, create_manga };
+export = { delete_manga, create_manga, update_manga };
 
 //ts-node manga_controller.ts

@@ -56,10 +56,19 @@ async function get_manga(manga_id) {
   }
 }
 
-async function delete_manga(manga_id) {
+async function update_manga(manga_id, cover, title, description) {
   try {
-    var res = await Manga.findByIdAndRemove(manga_id);
-
+    var res = await Manga.findOneAndUpdate(
+      manga_id,
+      {
+        cover: cover,
+        title: title,
+        description: description,
+      },
+      {
+        new: true,
+      }
+    );
     //res.send(JSON.stringify(r));
     console.log(res);
     return res;
@@ -68,9 +77,9 @@ async function delete_manga(manga_id) {
   }
 }
 
-async function update_manga(manga_id) {
+async function delete_manga(manga_id) {
   try {
-    var res = await Manga.findByIdAndUpdate(manga_id);
+    var res = await Manga.findByIdAndRemove(manga_id);
 
     //res.send(JSON.stringify(r));
     console.log(res);
@@ -135,37 +144,6 @@ async function create_comment(chapter_id, username, description) {
   return comment;
 }
 
-async function update_movie(
-  movie_id,
-  genres,
-  description,
-  year,
-  rating,
-  trailer
-) {
-  try {
-    const query = { id: movie_id };
-
-    var res = await Chapter.findOneAndUpdate(
-      query,
-      {
-        genres: genres,
-        description: description,
-        year: year,
-        rating: rating,
-        trailer: trailer,
-      },
-      {
-        new: true,
-      }
-    );
-    //res.send(JSON.stringify(r));
-    console.log(res);
-  } catch {
-    (err) => console.log(err);
-  }
-}
-
 async function get_comments(movie_id) {
   try {
     var res = await Comment.find({ movie_id: movie_id });
@@ -208,6 +186,7 @@ export = {
   create_comment,
   delete_comment,
   create_chapter,
+  update_manga,
 };
 
 //ts-node db.ts

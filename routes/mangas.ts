@@ -24,6 +24,15 @@ router.get("/", async (req, res) => {
   res.send(JSON.stringify(r));
 });
 
+router.put("/", upload.single("image"), async (req, res) => {
+  const { manga_id, title, description } = req.body;
+  const file = req.file;
+
+  var r = await manga_c.update_manga(manga_id, file.path, title, description);
+  console.log(r);
+  res.send(JSON.stringify(r));
+});
+
 router.get("/:title", async (req, res) => {
   const manga_title = req.params.title;
 
