@@ -1,3 +1,5 @@
+import Manga = require("../models/manga");
+
 const dotenv = require("dotenv").config({ path: "../.env" });
 var express = require("express");
 const fs = require("fs");
@@ -14,9 +16,35 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_SECRET_KEY,
 });
 */
-async function get_manga() {
-  cloudinary.v2.search.execute().then((result) => console.log(result));
+async function delete_manga(manga_id) {
+  var manga = await Manga.findById(manga_id);
+  var title = manga.title;
+  var to_delete = [];
+  var subfolders = await cloudinary.api.sub_folders(`Manga/${title}`);
+  console.log(subfolders);
+  subfolders.folders.forEach((element) => {
+    to_delete.push(element.path);
+  });
+  console.log(to_delete);
+  console.log(title);
+  //for await (const element of to_delete) {
+  //  await cloudinary.api.delete_folder(element, function (error, result) {
+  //    console.log(result, error);
+  //  });
+  //}
+  var r = await cloudinary.api.delete_all_resources(
+    { folder: to_delete[0] },
+    function (error, result) {
+      console.log(result, error);
+    }
+  );
+  //console.log(r);
+  //console.log(response.secure_url);
+  //console.log(response);
+  //return response;
 }
+
+//delete_manga("6243ed03799c7d2160f95c57");
 
 async function create_manga(title, cover, username, description) {
   var description = description || "";
@@ -68,6 +96,6 @@ cloudinary.v2.search
   .execute()
   .then((result) => console.log(result));
 */
-export = { get_manga, create_manga };
+export = { delete_manga, create_manga };
 
-//ts-node mangaController.ts
+//ts-node manga_controller.ts

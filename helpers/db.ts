@@ -59,11 +59,9 @@ async function get_manga(manga_id) {
 async function delete_manga(manga_id) {
   try {
     var res = await Manga.findByIdAndRemove(manga_id);
-    var res2 = await Chapter.deleteMany({ manga_id: manga_id });
 
     //res.send(JSON.stringify(r));
     console.log(res);
-    console.log(res2);
     return res;
   } catch {
     (err) => console.log(err);

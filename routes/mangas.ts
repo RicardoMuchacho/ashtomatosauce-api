@@ -49,6 +49,13 @@ router.post("/", upload.single("image"), async function (req, res, next) {
   res.send(JSON.stringify(response));
 });
 
+router.delete("/", upload.none(), async (req, res) => {
+  const manga_id = req.body.id;
+  console.log(manga_id);
+  var r = await Manga.findByIdAndRemove(manga_id);
+  res.send(JSON.stringify(r));
+});
+
 router.post(
   "/chapter",
   upload.array("images", 80),
@@ -63,78 +70,16 @@ router.post(
   }
 );
 
-router.post("/test", async (req, res) => {
-  try {
-    var prev_username = req.params.user;
-    var new_username = req.body.username;
-    var new_password = req.body.password;
-    var new_name = req.body.name;
-
-    const query = { username: prev_username };
-
-    var r = await User.findOneAndUpdate(
-      query,
-      { name: new_name },
-      {
-        new: true,
-      }
-    );
-    res.send(JSON.stringify(r));
-  } catch {
-    (err) => console.log(err);
-  }
-});
-
-router.delete("/:user", async (req, res) => {
-  try {
-    var delete_username = req.params.user;
-
-    var r = await User.findOneAndDelete({ username: delete_username });
-    res.send(JSON.stringify("Deleted, " + r));
-  } catch {
-    (err) => console.log(err);
-  }
-});
-
-router.get("/:user", async (req, res) => {
-  var username = req.params.user;
-  var r = await User.findOne({ username: username });
-  res.send(JSON.stringify(r));
-});
-
-router.get("/:user/comments", async (req, res) => {
-  var username = req.params.user;
-  var r = await Comment.find({ username: username });
-  res.send(JSON.stringify(r));
-});
-
-router.post("/:user/movies", async (req, res) => {
-  var username = req.params.user;
-  var movie_id = req.body.id;
-  var movie_title = req.body.title;
-  const query = { username: username };
-
-  var r = await User.findOneAndUpdate(
-    query,
-    { $pull: { movies: [{ id: movie_id }] } },
+router.delete("/chapter", upload.none(), async (req, res) => {
+  const { manga_id, number } = req.body;
+  var r = await Manga.findByIdAndUpdate(
+    manga_id,
+    { $pull: { chapters: { number: number } } },
     {
       new: true,
     }
   );
   res.send(JSON.stringify(r));
-});
-
-router.get("/:user/mangas", async (req, res) => {
-  var username = req.params.user;
-
-  var r = await User.findOne({ username: username });
-  console.log(r);
-
-  var user_movies = r.movies;
-  if (!user_movies || user_movies == "") {
-    return res.send(JSON.stringify("No movies added yet"));
-  }
-  res.send(JSON.stringify(user_movies));
 });
 
 export = router;
