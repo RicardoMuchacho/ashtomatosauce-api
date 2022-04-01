@@ -186,8 +186,8 @@ async function delete_comment(id) {
   } catch {
     (err) => console.log(err);
   }
-  var response = JSON.stringify("deleted: " + res);
-  return response;
+
+  return res;
 }
 
 //var pages = ["link1", "link2"];

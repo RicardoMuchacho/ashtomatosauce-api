@@ -6,6 +6,7 @@ const db = require("../helpers/db.ts");
 const User = require("../models/user");
 const Comment = require("../models/comment");
 const Manga = require("../models/manga");
+const auth = require("../helpers/auth.ts");
 
 var router = express.Router();
 
@@ -13,7 +14,7 @@ router.get("/", async (req, res) => {
   res.send("user route");
 });
 
-router.put("/:user", async (req, res) => {
+router.put("/:user", auth, async (req, res) => {
   try {
     var prev_username = req.params.user;
     var new_username = req.body.username;
@@ -37,12 +38,12 @@ router.put("/:user", async (req, res) => {
   }
 });
 
-router.delete("/:user", async (req, res) => {
+router.delete("/:user", auth, async (req, res) => {
   try {
     var delete_username = req.params.user;
 
     var r = await User.findOneAndDelete({ username: delete_username });
-    res.send(JSON.stringify("Deleted, " + r));
+    res.json({ deleted: r });
   } catch {
     (err) => console.log(err);
   }
@@ -54,21 +55,27 @@ router.get("/:user", async (req, res) => {
   res.send(JSON.stringify(r));
 });
 
+router.get("/:user/created", auth, async (req, res) => {
+  var username = req.params.user;
+  var r = await Manga.find({ username: username });
+  res.send(JSON.stringify(r));
+});
+
 router.get("/:user/comments", async (req, res) => {
   var username = req.params.user;
   var r = await Comment.find({ username: username });
   res.send(JSON.stringify(r));
 });
 
-router.delete("/:user/mangas", async (req, res) => {
+router.delete("/:user/mangas", auth, async (req, res) => {
   var username = req.params.user;
   var manga_id = req.body.id;
-  var manga_title = req.body.title;
+
   const query = { username: username };
 
   var r = await User.findOneAndUpdate(
     query,
-    { $pull: { mangas: [{ id: manga_id }] } },
+    { $pull: { mangas: { id: manga_id } } },
     {
       new: true,
     }
@@ -76,7 +83,7 @@ router.delete("/:user/mangas", async (req, res) => {
   res.send(JSON.stringify(r));
 });
 
-router.post("/:user/mangas", async (req, res) => {
+router.post("/:user/mangas", auth, async (req, res) => {
   const username = req.params.user;
   const manga_id = req.body.id;
 
@@ -86,8 +93,8 @@ router.post("/:user/mangas", async (req, res) => {
   var is_added = false;
   const query = { username: username };
 
-  var r = await User.findOne(query);
-  var user_mangas = r.mangas;
+  const user = await User.findOne(query);
+  const user_mangas = user.mangas;
   user_mangas.forEach((i) => {
     if (i.id == manga_id) {
       return (is_added = true);
@@ -96,9 +103,9 @@ router.post("/:user/mangas", async (req, res) => {
   if (is_added != false) {
     return res.send(JSON.stringify("Manga already added"));
   } else {
-    r = await User.findOneAndUpdate(
+    var r = await User.findOneAndUpdate(
       query,
-      { $push: { movies: { id: manga_id, title: manga_title } } },
+      { $push: { mangas: { id: manga_id, title: manga_title } } },
       {
         new: true,
       }
@@ -107,7 +114,7 @@ router.post("/:user/mangas", async (req, res) => {
   res.send(JSON.stringify(r));
 });
 
-router.get("/:user/mangas", async (req, res) => {
+router.get("/:user/mangas", auth, async (req, res) => {
   const username = req.params.user;
 
   const r = await User.findOne({ username: username });

@@ -57,7 +57,7 @@ router.post("/login", async (req, res) => {
         { user_id: user._id, username },
         process.env.TOKEN_KEY,
         {
-          expiresIn: "2h",
+          expiresIn: "48h",
         }
       );
 

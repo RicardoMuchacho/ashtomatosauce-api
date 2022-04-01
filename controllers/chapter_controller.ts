@@ -18,10 +18,19 @@ cloudinary.config({
 async function create_chapter(manga_id, chapter_number, pages) {
   var i = 1;
   var pages_url = [];
+  var exists = null;
+  const manga = await Manga.findById(manga_id);
 
-  var r = await Manga.findById(manga_id);
-
-  var manga_title = r.title;
+  const chapters = manga.chapters;
+  chapters.forEach((element) => {
+    if (element.number == chapter_number) {
+      return (exists = true);
+    }
+  });
+  if (exists == true) {
+    return "Chapter already exists";
+  }
+  var manga_title = manga.title;
   console.log(manga_title);
 
   for await (const element of pages) {

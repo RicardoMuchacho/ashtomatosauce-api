@@ -8,6 +8,7 @@ const Comment = require("../models/comment");
 const Manga = require("../models/manga");
 const path = require("path");
 const fs = require("fs");
+const auth = require("../helpers/auth.ts");
 
 const upload = multer({ dest: "uploads/" });
 
@@ -33,7 +34,44 @@ router.get("/:title", async (req, res) => {
   res.send(JSON.stringify(r));
 });
 
-router.post("/", upload.single("image"), async function (req, res, next) {
+router.get("/chapters/:id", async (req, res) => {
+  const manga_id = req.params.id;
+  try {
+    var r = await Manga.findById(manga_id);
+  } catch (error) {
+    console.log(error);
+  }
+  if (!r || r == null || r.chapters == "") {
+    return res.send(JSON.stringify("No Chapters found"));
+  }
+  return res.send(JSON.stringify(r.chapters));
+});
+
+router.get("/chapter/:id", async (req, res) => {
+  const chapter_id = req.params.id;
+  var chapter = null;
+  try {
+    var r = await Manga.findOne({ "chapters._id": chapter_id }, "chapters");
+    console.log(r);
+  } catch (error) {
+    console.log(error);
+  }
+  if (!r || r == null || r.chapters == "") {
+    return res.send(JSON.stringify("No Chapters found"));
+  }
+  console.log(r.chapters);
+  r.chapters.forEach((element) => {
+    if (element._id == chapter_id) {
+      return (chapter = element);
+    }
+  });
+
+  const comments = await Comment.find({ chapter_id: chapter_id });
+  console.log(comments);
+  return res.json({ chapter: chapter, comments: comments });
+});
+
+router.post("/", auth, upload.single("image"), async function (req, res, next) {
   const { title, username, description } = req.body;
   const file = req.file;
   console.log(file);
@@ -49,7 +87,7 @@ router.post("/", upload.single("image"), async function (req, res, next) {
   res.send(JSON.stringify(response));
 });
 
-router.delete("/", upload.none(), async (req, res) => {
+router.delete("/", auth, upload.none(), async (req, res) => {
   const manga_id = req.body.id;
   console.log(manga_id);
   var r = await Manga.findByIdAndRemove(manga_id);
@@ -58,6 +96,7 @@ router.delete("/", upload.none(), async (req, res) => {
 
 router.post(
   "/chapter",
+  auth,
   upload.array("images", 80),
   async function (req, res, next) {
     const files = req.files;
@@ -70,7 +109,7 @@ router.post(
   }
 );
 
-router.delete("/chapter", upload.none(), async (req, res) => {
+router.delete("/chapter", auth, upload.none(), async (req, res) => {
   const { manga_id, number } = req.body;
   var r = await Manga.findByIdAndUpdate(
     manga_id,
@@ -80,6 +119,33 @@ router.delete("/chapter", upload.none(), async (req, res) => {
     }
   );
   res.send(JSON.stringify(r));
+});
+
+router.get("/comment/:id", async (req, res) => {
+  const chapter_id = req.params.id;
+
+  var comments = await Comment.find({ chapter_id: chapter_id });
+  res.send(JSON.stringify(comments));
+});
+
+router.post("/comment/:id", auth, async (req, res) => {
+  const { username, description } = req.body;
+  const chapter_id = req.params.id;
+
+  var r = await db.create_comment(chapter_id, username, description);
+  res.send(JSON.stringify(r));
+});
+
+router.delete("/comment/:id", auth, async (req, res) => {
+  const comment_id = req.params.id;
+  const username = req.body.user;
+  var comment = Comment.findById(comment_id);
+  console.log(comment);
+  if (username != comment.username) {
+    return res.json({ message: "you're not the author" });
+  }
+  var r = await db.delete_comment(comment_id);
+  res.json({ deleted: r });
 });
 
 export = router;
