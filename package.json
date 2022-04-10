@@ -3,6 +3,10 @@
   "packageManager": "yarn@3.2.0",
   "version": "1.0.0",
   "main": "index.js",
+  "scripts": {
+    "start": "ts-node server.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "repository": "https://github.com/RicardoMuchacho/ashtomatosauce-api",
   "author": "Ricardo Muchacho <ricardojrmuchacho2@gmail.com>",
   "license": "MIT",
@@ -23,5 +27,8 @@
     "nodemon": "^2.0.9",
     "path": "^0.12.7",
     "s3": "^4.4.0"
+  },
+  "engines": {
+    "node": "16.x"
   }
 }
