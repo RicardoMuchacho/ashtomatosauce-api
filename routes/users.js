@@ -32,7 +32,7 @@ router.put("/:user", auth, async (req, res) => {
         new: true,
       }
     );
-    res.send(JSON.stringify(r));
+    res.json(r);
   } catch {
     (err) => console.log(err);
   }
@@ -52,19 +52,19 @@ router.delete("/:user", auth, async (req, res) => {
 router.get("/:user", async (req, res) => {
   var username = req.params.user;
   var r = await User.findOne({ username: username });
-  res.send(JSON.stringify(r));
+  res.json(r);
 });
 
 router.get("/:user/created", auth, async (req, res) => {
   var username = req.params.user;
   var r = await Manga.find({ username: username });
-  res.send(JSON.stringify(r));
+  res.json(r);
 });
 
 router.get("/:user/comments", async (req, res) => {
   var username = req.params.user;
   var r = await Comment.find({ username: username });
-  res.send(JSON.stringify(r));
+  res.json(r);
 });
 
 router.delete("/:user/mangas", auth, async (req, res) => {
@@ -80,7 +80,7 @@ router.delete("/:user/mangas", auth, async (req, res) => {
       new: true,
     }
   );
-  res.send(JSON.stringify(r));
+  res.json(r);
 });
 
 router.post("/:user/mangas", auth, async (req, res) => {
@@ -101,7 +101,7 @@ router.post("/:user/mangas", auth, async (req, res) => {
     }
   });
   if (is_added != false) {
-    return res.send(JSON.stringify("Manga already added"));
+    return res.json("Manga already added");
   } else {
     var r = await User.findOneAndUpdate(
       query,
@@ -111,7 +111,7 @@ router.post("/:user/mangas", auth, async (req, res) => {
       }
     );
   }
-  res.send(JSON.stringify(r));
+  res.json(r);
 });
 
 router.get("/:user/mangas", auth, async (req, res) => {
@@ -122,9 +122,9 @@ router.get("/:user/mangas", auth, async (req, res) => {
 
   var user_mangas = r.mangas;
   if (!user_mangas || user_mangas == "") {
-    return res.send(JSON.stringify("No mangas added yet"));
+    return res.json("No mangas added yet");
   }
-  res.send(JSON.stringify(user_mangas));
+  res.json(user_mangas);
 });
 
 module.exports = router;

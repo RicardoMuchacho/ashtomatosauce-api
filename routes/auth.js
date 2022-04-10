@@ -17,13 +17,13 @@ router.post("/register", async (req, res) => {
     const { name, username, password } = await req.body;
 
     if (!(username && password)) {
-      res.status(400).send("All input is required");
+      res.status(400).json("All input is required");
     }
 
     const old_user = await User.findOne({ username: username });
 
     if (old_user) {
-      return res.status(409).send("User Already Exist. Please Login");
+      return res.status(409).json("User Already Exist. Please Login");
     }
 
     const encryptedPassword = await bcrypt.hash(password, 10);
@@ -46,10 +46,13 @@ router.post("/login", async (req, res) => {
 
     // Validate user input
     if (!(username && password)) {
-      res.status(400).send("All input is required");
+      res.status(400).json("All input is required");
     }
     // Validate if user exist in our database
     const user = await User.findOne({ username });
+    if (!user || user == null || user == "") {
+      res.status(404).json({ msg: "User not found" });
+    }
 
     if (user && (await bcrypt.compare(password, user.password))) {
       // Create token
@@ -67,14 +70,14 @@ router.post("/login", async (req, res) => {
       // user
       return res.status(200).json(user);
     }
-    res.status(400).send("Invalid Credentials");
+    res.status(400).json("Invalid Credentials");
   } catch (err) {
     console.log(err);
   }
 });
 
 router.get("/auth_test", auth, (req, res) => {
-  res.status(200).send("Auth Successfull");
+  res.status(200).json("Auth Successfull");
 });
 
 module.exports = router;

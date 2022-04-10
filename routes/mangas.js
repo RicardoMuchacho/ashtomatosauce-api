@@ -22,7 +22,7 @@ var router = express.Router();
 router.get("/", async (req, res) => {
   const r = await Manga.find();
   console.log(r);
-  res.send(JSON.stringify(r));
+  res.json(r);
 });
 
 router.put("/", upload.single("image"), async (req, res) => {
@@ -31,7 +31,7 @@ router.put("/", upload.single("image"), async (req, res) => {
 
   var r = await manga_c.update_manga(manga_id, file.path, title, description);
   console.log(r);
-  res.send(JSON.stringify(r));
+  res.json(r);
 });
 
 router.get("/:title", async (req, res) => {
@@ -41,7 +41,7 @@ router.get("/:title", async (req, res) => {
   if (!r || r == null || r == "") {
     return res.send(JSON.stringify("No Mangas found"));
   }
-  res.send(JSON.stringify(r));
+  resjson(r);
 });
 
 router.get("/chapters/:id", async (req, res) => {
@@ -52,9 +52,9 @@ router.get("/chapters/:id", async (req, res) => {
     console.log(error);
   }
   if (!r || r == null || r.chapters == "") {
-    return res.send(JSON.stringify("No Chapters found"));
+    return res.json("No Chapters found");
   }
-  return res.send(JSON.stringify(r.chapters));
+  return res.json(r.chapters);
 });
 
 router.get("/chapter/:id", async (req, res) => {
@@ -67,7 +67,7 @@ router.get("/chapter/:id", async (req, res) => {
     console.log(error);
   }
   if (!r || r == null || r.chapters == "") {
-    return res.send(JSON.stringify("No Chapters found"));
+    return res.json("No Chapters found");
   }
   console.log(r.chapters);
   r.chapters.forEach((element) => {
@@ -94,14 +94,14 @@ router.post("/", auth, upload.single("image"), async function (req, res, next) {
   );
 
   await fs.unlink(file.path, (error) => console.log(error));
-  res.send(JSON.stringify(response));
+  res.json(response);
 });
 
 router.delete("/", auth, upload.none(), async (req, res) => {
   const manga_id = req.body.id;
   console.log(manga_id);
   var r = await Manga.findByIdAndRemove(manga_id);
-  res.send(JSON.stringify(r));
+  res.json(r);
 });
 
 router.post(
@@ -115,7 +115,7 @@ router.post(
     const file_paths = files.map((i) => i.path);
     console.log(file_paths);
     var r = await chapter_c.create_chapter(manga_id, number, file_paths);
-    res.send(JSON.stringify(r));
+    res.json(r);
   }
 );
 
@@ -128,14 +128,14 @@ router.delete("/chapter", auth, upload.none(), async (req, res) => {
       new: true,
     }
   );
-  res.send(JSON.stringify(r));
+  res.json(r);
 });
 
 router.get("/comment/:id", async (req, res) => {
   const chapter_id = req.params.id;
 
   var comments = await Comment.find({ chapter_id: chapter_id });
-  res.send(JSON.stringify(comments));
+  res.json(comments);
 });
 
 router.post("/comment/:id", auth, async (req, res) => {
@@ -143,7 +143,7 @@ router.post("/comment/:id", auth, async (req, res) => {
   const chapter_id = req.params.id;
 
   var r = await db.create_comment(chapter_id, username, description);
-  res.send(JSON.stringify(r));
+  res.json(r);
 });
 
 router.delete("/comment/:id", auth, async (req, res) => {
@@ -152,7 +152,7 @@ router.delete("/comment/:id", auth, async (req, res) => {
   var comment = Comment.findById(comment_id);
   console.log(comment);
   if (username != comment.username) {
-    return res.json({ message: "you're not the author" });
+    return res.json({ msg: "you're not the author" });
   }
   var r = await db.delete_comment(comment_id);
   res.json({ deleted: r });
