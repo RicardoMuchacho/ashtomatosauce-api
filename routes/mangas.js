@@ -18,6 +18,7 @@ const chapter_c = require("../controllers/chapter_controller");
 
 var router = express.Router();
 
+//routes
 router.get("/", async (req, res) => {
   const r = await Manga.find();
   console.log(r);
