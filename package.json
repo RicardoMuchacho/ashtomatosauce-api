@@ -5,7 +5,6 @@
   "main": "index.js",
   "scripts": {
     "start": "node dist/server.js",
-    "postinstall": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": "https://github.com/RicardoMuchacho/ashtomatosauce-api",
