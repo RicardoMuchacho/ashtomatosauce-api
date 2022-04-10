@@ -84,7 +84,7 @@ async function update_manga(manga_id, cover, title, description) {
     title,
     description
   );
-  console.log(JSON.stringify(res));
+  console.log(res);
   return res;
 }
 
