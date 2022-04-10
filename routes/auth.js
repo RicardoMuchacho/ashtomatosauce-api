@@ -4,7 +4,7 @@ var User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const dotenv = require("dotenv");
-const auth = require("../helpers/auth.ts");
+const auth = require("../helpers/auth");
 
 var router = express.Router();
 
@@ -77,4 +77,4 @@ router.get("/auth_test", auth, (req, res) => {
   res.status(200).send("Auth Successfull");
 });
 
-export = router;
+module.exports = router;

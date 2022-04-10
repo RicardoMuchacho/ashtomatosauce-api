@@ -95,6 +95,6 @@ cloudinary.v2.search
 
 
 */
-export = { create_chapter };
+module.exports = { create_chapter };
 
 //ts-node chapter_controller.ts

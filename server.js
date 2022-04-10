@@ -1,5 +1,5 @@
 const express = require("express");
-const app = require("./index.ts");
+const app = require("./index");
 const mongoose = require("mongoose");
 const http = require("http");
 const https = require("https");

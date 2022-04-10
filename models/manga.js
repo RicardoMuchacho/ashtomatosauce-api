@@ -27,4 +27,4 @@ const mangaSchema = new Schema({
 
 const Manga = mongoose.model("Manga", mangaSchema);
 
-export = Manga;
+module.exports = Manga;

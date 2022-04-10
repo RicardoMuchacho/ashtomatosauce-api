@@ -2,13 +2,13 @@ var express = require("express");
 var router = express.Router();
 const multer = require("multer");
 const dotenv = require("dotenv").config();
-const db = require("../helpers/db.ts");
+const db = require("../helpers/db");
 const User = require("../models/user");
 const Comment = require("../models/comment");
 const Manga = require("../models/manga");
 const path = require("path");
 const fs = require("fs");
-const auth = require("../helpers/auth.ts");
+const auth = require("../helpers/auth");
 
 const upload = multer({ dest: "uploads/" });
 
@@ -157,4 +157,4 @@ router.delete("/comment/:id", auth, async (req, res) => {
   res.json({ deleted: r });
 });
 
-export = router;
+module.exports = router;

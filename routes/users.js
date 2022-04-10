@@ -2,11 +2,11 @@ var express = require("express");
 var router = express.Router();
 const bcrypt = require("bcryptjs");
 const dotenv = require("dotenv");
-const db = require("../helpers/db.ts");
+const db = require("../helpers/db");
 const User = require("../models/user");
 const Comment = require("../models/comment");
 const Manga = require("../models/manga");
-const auth = require("../helpers/auth.ts");
+const auth = require("../helpers/auth");
 
 var router = express.Router();
 
@@ -127,4 +127,4 @@ router.get("/:user/mangas", auth, async (req, res) => {
   res.send(JSON.stringify(user_mangas));
 });
 
-export = router;
+module.exports = router;

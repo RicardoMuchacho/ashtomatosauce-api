@@ -1,6 +1,5 @@
-import Manga = require("../models/manga");
-
 const dotenv = require("dotenv").config({ path: "../.env" });
+
 var express = require("express");
 const fs = require("fs");
 const util = require("util");
@@ -8,6 +7,7 @@ const unlinkFile = util.promisify(fs.unlink);
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
 const db = require("../helpers/db");
+const Manga = require("../models/manga");
 
 /*
 cloudinary.config({
@@ -117,6 +117,6 @@ cloudinary.v2.search
   .execute()
   .then((result) => console.log(result));
 */
-export = { delete_manga, create_manga, update_manga };
+module.exports = { delete_manga, create_manga, update_manga };
 
 //ts-node manga_controller.ts

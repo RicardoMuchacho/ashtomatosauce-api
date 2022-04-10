@@ -178,7 +178,7 @@ async function delete_comment(id) {
 //get_manga("623ce01dd85e8d0aeca725ca");
 //create_manga("test", "rr", "rr", "");
 
-export = {
+module.exports = {
   create_manga,
   get_manga,
   get_all_manga,
