@@ -47,24 +47,28 @@ async function delete_manga(manga_id) {
 //delete_manga("6243ed03799c7d2160f95c57");
 
 async function create_manga(title, cover, username, description) {
-  var description = description || "";
+  try {
+    var description = description || "";
 
-  var response = await cloudinary.uploader.upload(
-    cover,
-    { folder: `Manga/${title}/`, public_id: "cover" },
-    function (error, result) {
-      console.log(result, error);
-    }
-  );
-  //console.log(response.secure_url);
-  var res = await db.create_manga(
-    username,
-    response.secure_url,
-    title,
-    description
-  );
-  console.log(JSON.stringify(res));
-  return res;
+    var response = await cloudinary.uploader.upload(
+      cover,
+      { folder: `Manga/${title}/`, public_id: "cover" },
+      function (error, result) {
+        console.log(result, error);
+      }
+    );
+    //console.log(response.secure_url);
+    var res = await db.create_manga(
+      username,
+      response.secure_url,
+      title,
+      description
+    );
+    console.log(JSON.stringify(res));
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 async function update_manga(manga_id, cover, title, description) {

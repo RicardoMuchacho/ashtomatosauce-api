@@ -81,20 +81,24 @@ router.get("/chapter/:id", async (req, res) => {
   return res.json({ chapter: chapter, comments: comments });
 });
 
-router.post("/", upload.single("image"), async function (req, res, next) {
-  const { title, username, description } = req.body;
-  const file = req.file;
-  console.log(file);
+router.post("/", upload.single("image"), async function (req, res) {
+  try {
+    const { title, username, description } = req.body;
+    const file = req.file;
+    console.log(file);
 
-  var response = await manga_c.create_manga(
-    title,
-    file.path,
-    username,
-    description
-  );
+    var response = await manga_c.create_manga(
+      title,
+      file.path,
+      username,
+      description
+    );
 
-  await fs.unlink(file.path, (error) => console.log(error));
-  res.json(response);
+    await fs.unlink(file.path, (error) => console.log(error));
+    return res.json(response);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 router.delete("/", upload.none(), async (req, res) => {
@@ -108,7 +112,7 @@ router.post(
   "/chapter",
   auth,
   upload.array("images", 80),
-  async function (req, res, next) {
+  async function (req, res) {
     const files = req.files;
     const { manga_id, number } = req.body;
 
