@@ -81,7 +81,7 @@ router.get("/chapter/:id", async (req, res) => {
   return res.json({ chapter: chapter, comments: comments });
 });
 
-router.post("/", auth, upload.single("image"), async function (req, res, next) {
+router.post("/", upload.single("image"), async function (req, res, next) {
   const { title, username, description } = req.body;
   const file = req.file;
   console.log(file);
@@ -97,7 +97,7 @@ router.post("/", auth, upload.single("image"), async function (req, res, next) {
   res.json(response);
 });
 
-router.delete("/", auth, upload.none(), async (req, res) => {
+router.delete("/", upload.none(), async (req, res) => {
   const manga_id = req.body.id;
   console.log(manga_id);
   var r = await Manga.findByIdAndRemove(manga_id);
@@ -119,7 +119,7 @@ router.post(
   }
 );
 
-router.delete("/chapter", auth, upload.none(), async (req, res) => {
+router.delete("/chapter", upload.none(), async (req, res) => {
   const { manga_id, number } = req.body;
   var r = await Manga.findByIdAndUpdate(
     manga_id,
@@ -146,7 +146,7 @@ router.post("/comment/:id", auth, async (req, res) => {
   res.json(r);
 });
 
-router.delete("/comment/:id", auth, async (req, res) => {
+router.delete("/comment/:id", async (req, res) => {
   const comment_id = req.params.id;
   const username = req.body.user;
   var comment = Comment.findById(comment_id);

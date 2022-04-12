@@ -14,7 +14,7 @@ router.get("/", async (req, res) => {
   res.send("user route");
 });
 
-router.put("/:user", auth, async (req, res) => {
+router.put("/:user", async (req, res) => {
   try {
     var prev_username = req.params.user;
     var new_username = req.body.username;
@@ -38,7 +38,7 @@ router.put("/:user", auth, async (req, res) => {
   }
 });
 
-router.delete("/:user", auth, async (req, res) => {
+router.delete("/:user", async (req, res) => {
   try {
     var delete_username = req.params.user;
 
@@ -55,7 +55,7 @@ router.get("/:user", async (req, res) => {
   res.json(r);
 });
 
-router.get("/:user/created", auth, async (req, res) => {
+router.get("/:user/created", async (req, res) => {
   var username = req.params.user;
   var r = await Manga.find({ username: username });
   res.json(r);
@@ -67,7 +67,7 @@ router.get("/:user/comments", async (req, res) => {
   res.json(r);
 });
 
-router.delete("/:user/mangas", auth, async (req, res) => {
+router.delete("/:user/mangas", async (req, res) => {
   var username = req.params.user;
   var manga_id = req.body.id;
 
@@ -83,7 +83,7 @@ router.delete("/:user/mangas", auth, async (req, res) => {
   res.json(r);
 });
 
-router.post("/:user/mangas", auth, async (req, res) => {
+router.post("/:user/mangas", async (req, res) => {
   const username = req.params.user;
   const manga_id = req.body.id;
 
@@ -114,7 +114,7 @@ router.post("/:user/mangas", auth, async (req, res) => {
   res.json(r);
 });
 
-router.get("/:user/mangas", auth, async (req, res) => {
+router.get("/:user/mangas", async (req, res) => {
   const username = req.params.user;
 
   const r = await User.findOne({ username: username });
