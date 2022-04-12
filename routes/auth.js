@@ -75,7 +75,6 @@ router.post("/login", async (req, res) => {
     console.log(err);
   }
 });
-
 router.get("/auth_test", auth, (req, res) => {
   res.status(200).json("Auth Successfull");
 });
