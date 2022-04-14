@@ -19,8 +19,9 @@ const userSchema = new Schema({
   },
   mangas: [
     {
-      id: String,
+      manga_id: String,
       title: String,
+      cover: String,
     },
   ],
   token: { type: String },

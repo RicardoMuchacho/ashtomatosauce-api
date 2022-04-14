@@ -88,15 +88,21 @@ router.post("/:user/mangas", async (req, res) => {
   const manga_id = req.body.id;
 
   const manga = await Manga.findById(manga_id);
+
+  if (!manga) {
+    return console.log("No mangas found");
+  }
   const manga_title = manga.title;
+  const cover = manga.cover;
 
   var is_added = false;
   const query = { username: username };
 
   const user = await User.findOne(query);
   const user_mangas = user.mangas;
+
   user_mangas.forEach((i) => {
-    if (i.id == manga_id) {
+    if (i.manga_id == manga_id) {
       return (is_added = true);
     }
   });
@@ -105,7 +111,11 @@ router.post("/:user/mangas", async (req, res) => {
   } else {
     var r = await User.findOneAndUpdate(
       query,
-      { $push: { mangas: { id: manga_id, title: manga_title } } },
+      {
+        $push: {
+          mangas: { manga_id: manga_id, title: manga_title, cover: cover },
+        },
+      },
       {
         new: true,
       }
