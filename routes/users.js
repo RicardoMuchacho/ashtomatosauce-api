@@ -27,7 +27,7 @@ router.put("/:user", async (req, res) => {
 
     var r = await User.findOneAndUpdate(
       query,
-      { name: new_name, username: new_username, password: encrypted_password },
+      { username: new_username, password: encrypted_password },
       {
         new: true,
       }
