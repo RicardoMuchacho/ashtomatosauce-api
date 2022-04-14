@@ -21,10 +21,18 @@ var router = express.Router();
 //routes
 router.get("/", async (req, res) => {
   const author = req.query.author || null;
+  const id = req.query.id || null;
+
+  if (id) {
+    console.log(id);
+    let r = await Manga.findById(id);
+    console.log(r);
+    return res.json(r);
+  }
 
   if (author) {
     console.log(author);
-    var r = await Manga.find({ username: author });
+    let r = await Manga.find({ username: author });
     return res.json(r);
   }
 
