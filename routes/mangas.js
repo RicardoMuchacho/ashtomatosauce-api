@@ -20,6 +20,14 @@ var router = express.Router();
 
 //routes
 router.get("/", async (req, res) => {
+  const author = req.query.author || null;
+
+  if (author) {
+    console.log(author);
+    var r = await Manga.find({ username: author });
+    return res.json(r);
+  }
+
   const r = await Manga.find();
   console.log(r);
   res.json(r);
@@ -39,9 +47,9 @@ router.get("/:title", async (req, res) => {
 
   var r = await Manga.find({ title: { $regex: manga_title, $options: "i" } });
   if (!r || r == null || r == "") {
-    return res.send(JSON.stringify("No Mangas found"));
+    return res.json("No Mangas found");
   }
-  resjson(r);
+  res.json(r);
 });
 
 router.get("/chapters/:id", async (req, res) => {
