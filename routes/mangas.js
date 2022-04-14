@@ -28,9 +28,9 @@ router.get("/", async (req, res) => {
     return res.json(r);
   }
 
-  const r = await Manga.find();
-  console.log(r);
-  res.json(r);
+  const allmangas = await Manga.find();
+  console.log(allmangas);
+  res.json(allmangas);
 });
 
 router.put("/", upload.single("image"), async (req, res) => {
