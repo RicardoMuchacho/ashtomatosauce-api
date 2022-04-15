@@ -75,7 +75,7 @@ router.delete("/:user/mangas", async (req, res) => {
 
   var r = await User.findOneAndUpdate(
     query,
-    { $pull: { mangas: { id: manga_id } } },
+    { $pull: { mangas: { manga_id: manga_id } } },
     {
       new: true,
     }
