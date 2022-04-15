@@ -19,7 +19,7 @@ router.put("/:user", async (req, res) => {
     var prev_username = req.params.user;
     var new_username = req.body.username;
     var new_password = req.body.password;
-    var new_name = req.body.name;
+    //var new_name = req.body.name;
 
     var encrypted_password = await bcrypt.hash(new_password, 10);
 
