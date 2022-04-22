@@ -13,6 +13,10 @@ Desarrolladores: Figueroa Alonso, C.I. V-28536894 y Muchacho Ricardo, C.I. V-278
 
 ### *1. Utiliza herramientas/módulos como:*
 - express (framework web transigente, escrito en JavaScript y alojado dentro del entorno de ejecución NodeJS).
+- http (proporciona funciones y clases útiles para construir un servidor HTTP).
+- https (proporciona funciones y clases útiles para construir un servidor HTTPS).
+- Morgan (middleware para la captura de solicitudes HTTP para Node. js para su posterior registro y seguimiento).
+- Cors (Intercambio de Recursos de Origen Cruzado, un mecanismo que utiliza cabeceras HTTP adicionales para permitir que se obtenga permiso para acceder a recursos seleccionados desde un servidor, en un origen distinto (dominio) al que pertenece).	
 - router (para crear manejadores de rutas montables y modulares. Una instancia Router es un sistema de middleware y direccionamiento completo).
 - dotenv (para manejar variables de entorno).
 - bcryptjs (la función de hashing de bcrypt nos permite construir una plataforma de seguridad de contraseñas que escala con el poder de cómputo).
