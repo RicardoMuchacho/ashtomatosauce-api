@@ -13,6 +13,7 @@ Desarrolladores: Figueroa Alonso, C.I. V-28536894 y Muchacho Ricardo, C.I. V-278
 
 ### *1. Utiliza herramientas/módulos como:*
 - express (framework web transigente, escrito en JavaScript y alojado dentro del entorno de ejecución NodeJS).
+- router (para crear manejadores de rutas montables y modulares. Una instancia Router es un sistema de middleware y direccionamiento completo).
 - dotenv (para manejar variables de entorno).
 - bcryptjs (la función de hashing de bcrypt nos permite construir una plataforma de seguridad de contraseñas que escala con el poder de cómputo).
 - Multer (middleware para Express y Node. js que hace que sea fácil manipular este multipart/form-data cuando tus usuarios suben archivos).
