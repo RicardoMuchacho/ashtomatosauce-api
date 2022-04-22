@@ -20,9 +20,25 @@ var router = express.Router();
 
 //routes
 router.get("/", async (req, res) => {
-  const r = await Manga.find();
-  console.log(r);
-  res.json(r);
+  const author = req.query.author || null;
+  const id = req.query.id || null;
+
+  if (id) {
+    console.log(id);
+    let r = await Manga.findById(id);
+    console.log(r);
+    return res.json(r);
+  }
+
+  if (author) {
+    console.log(author);
+    let r = await Manga.find({ username: author });
+    return res.json(r);
+  }
+
+  const allmangas = await Manga.find();
+  console.log(allmangas);
+  res.json(allmangas);
 });
 
 router.put("/", upload.single("image"), async (req, res) => {
@@ -39,9 +55,9 @@ router.get("/:title", async (req, res) => {
 
   var r = await Manga.find({ title: { $regex: manga_title, $options: "i" } });
   if (!r || r == null || r == "") {
-    return res.send(JSON.stringify("No Mangas found"));
+    return res.json("No Mangas found");
   }
-  resjson(r);
+  res.json(r);
 });
 
 router.get("/chapters/:id", async (req, res) => {
